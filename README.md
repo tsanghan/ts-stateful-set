@@ -1,6 +1,7 @@
-# techsummit-stateful-set
+# ts-stateful-set
+
 Start your `kind` cluster.  
-Install your CNI.  
+Install your CNI.
 
 ```sh
 metallb.sh # install metallb
