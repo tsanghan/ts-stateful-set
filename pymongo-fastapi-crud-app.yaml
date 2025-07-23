@@ -1,0 +1,74 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pymongo-fastapi-crud
+  name: pymongo-fastapi-crud
+  namespace: default
+spec:
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: pymongo-fastapi-crud
+  sessionAffinity: None
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pymongo-fastapi-crud-secrets
+stringData:
+  mongo-dbname: ts_2025
+  mongo-url: mongodb://root:xtech42@mongo-mongodb-0.mongodb,mongo-mongodb-1.mongodb,mongo-mongodb-2.mongodb:27017/
+...
+# ---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+  # name: pymongo-fastapi-crud-secrets
+# data:
+  # mongo-dbname: dHNfMjAyNQ==
+  # mongo-url: bW9uZ29kYjovL3Jvb3Q6eHRlY2g0MkBtb25nby1tb25nb2RiLTAubW9uZ29kYixtb25nby1tb25nb2RiLTEubW9uZ29kYixtb25nby1tb25nb2RiLTIubW9uZ29kYjoyNzAxNy8=
+# ...
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: pymongo-fastapi-crud
+  name: pymongo-fastapi-crud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pymongo-fastapi-crud
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: pymongo-fastapi-crud
+    spec:
+      containers:
+      - image: ghcr.io/tsanghan/pymongo-fastapi-crud:v1
+        name: pymongo-fastapi-crud
+        env:
+        - name: MONGO_URL
+          valueFrom:
+            secretKeyRef:
+              name: pymongo-fastapi-crud-secrets
+              key: mongo-url
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: pymongo-fastapi-crud-secrets
+              key: mongo-dbname
+        resources: {}
+...
