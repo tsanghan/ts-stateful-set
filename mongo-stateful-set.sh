@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm install mongo bitnami/mongodb --version 16.5.31 \
+helm install mongo bitnami/mongodb --version "$KX_MONGODB_HELM_CHART_VER" \
   --set global.defaultStorageClass=nfs-csi \
   --set architecture=replicaset \
   --set useStatefulSet=true \
